@@ -28,7 +28,7 @@ public class DefaultEntryService implements EntryService {
 
 		List<Entry> entries = entryRepository.findAll();
 
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
 
 
 		String[] time = new String[10];
