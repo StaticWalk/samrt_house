@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
+
+<head>
+    <meta charset="UTF-8">
+    <title>数据可视化</title>
+</head>
+<body style="height: 100%; margin: 0">
+<div id="main1"
+     style="height: 100%"></div>
+
+</div>
+
+<div id="mychars" style="height: 300px;width: 400px;"></div>
+
+<script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts-en.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    //饼图
+    var myChart1 = echarts.init(document.getElementById('main1'));option = {
+        title : {
+            text: '基于树莓派室内温湿度分析',
+            subtext: '温度/湿度数据监测'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['温度','湿度']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                // data : []
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'温度',
+                type:'line',
+                smooth:true,
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                // data:[10, 12, 21, 54, 260, 830, 710]
+            },
+            {
+                name:'湿度',
+                type:'line',
+                smooth:true,
+                itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                // data:[1320, 1132, 601, 234, 120, 90, 20]
+            }
+        ]
+    };
+
+    function getData(){
+        $.ajax({
+            url : "/getInfo",
+            type : "GET",
+            dataType : "json",
+            success : function(result) {
+                if (result) {
+                    myChart1.setOption({
+                        xAxis : [{
+                            data : result.time
+                        }],
+                        series:[{
+                            data:result.temperature
+                        },{
+                            data:result.humidity
+                        }]
+                    });
+                }
+            }
+
+        });
+
+
+    }
+
+    myChart1.setOption(option);
+    //这里是5秒自动刷新,这样数据库一旦有新的记录 就不用手动刷新页面就能显示新的数据。
+    setInterval(function () {
+        getData();
+    },5000)
+
+</script>
+</body>
+
+</html>
